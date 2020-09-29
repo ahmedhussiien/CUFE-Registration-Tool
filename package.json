@@ -1,0 +1,15 @@
+{
+  "name": "cufe-registration-script",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "run" : "node index.js"
+  },
+  "author": "Ahmed Hussein",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "puppeteer": "^5.3.1"
+  }
+}
