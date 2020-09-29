@@ -59,13 +59,13 @@ async function registerMe() {
   await page.$eval(`#${LOGIN_BTN}`, (el) => el.click());
   await page.waitForNavigation(NAVIGATION_WAIT);
 
-  // Go to the registeration page
+  // Go to the registration page
   const regLogin =
     "https://std.eng.cu.edu.eg/SIS/Modules/MetaLoader.aspx?path=~/SIS/Modules/Student/Registration/Registration.ascx";
 
   await page.goto(regLogin);
 
-  // Check if registeration is open
+  // Check if the registration is open
   let refreshBtnEnabled = true;
   let nextBtn = null;
   let refreshBtn = null;
@@ -98,7 +98,7 @@ async function registerMe() {
     await lec.click();
   }
 
-  // Finalizing registeration
+  // Finalizing registration
   let regNextBtn = await page.waitForSelector(`#${REG_SECOND_PAGE_BTN}`);
   await regNextBtn.click();
 
