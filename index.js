@@ -46,8 +46,9 @@ async function registerMe() {
   const browser = await puppeteer.launch({
     headless: false,
     defaultViewport: null,
+    args: ["--start-maximized"],
   });
-  const page = await browser.newPage();
+  const page = (await browser.pages())[0]
 
   // Go to the login page
   const loginUrl = "https://std.eng.cu.edu.eg/";
@@ -60,17 +61,17 @@ async function registerMe() {
   await page.waitForNavigation(NAVIGATION_WAIT);
 
   // Go to the registration page
-  const regLogin =
+  const regUrl =
     "https://std.eng.cu.edu.eg/SIS/Modules/MetaLoader.aspx?path=~/SIS/Modules/Student/Registration/Registration.ascx";
 
-  await page.goto(regLogin);
+  await page.goto(regUrl);
 
   // Check if the registration is open
-  let refreshBtnEnabled = true;
   let nextBtn = null;
   let refreshBtn = null;
+  let refreshBtnEnabled = true;
 
-  while (!nextBtn || refreshBtnEnabled) {
+  while (!nextBtn) {
     // Check for the next button
     nextBtn = await page.$(`#${REG_START_BTN}`);
     if (nextBtn) {
