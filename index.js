@@ -48,7 +48,7 @@ async function registerMe() {
     defaultViewport: null,
     args: ["--start-maximized"],
   });
-  const page = (await browser.pages())[0]
+  const page = (await browser.pages())[0];
 
   // Go to the login page
   const loginUrl = "https://std.eng.cu.edu.eg/";
@@ -83,15 +83,24 @@ async function registerMe() {
     refreshBtn = await page.$(`#${REFRESH_BTN}`);
 
     if (refreshBtn)
-      refreshBtnEnabled = await (await refreshBtn.getProperty("enabled")) //TODO: change property
-        .jsonValue();
+      refreshBtnEnabled =
+        (await (await refreshBtn.getProperty("disabled")).jsonValue()) == false;
 
-    if (refreshBtn && refreshBtnEnabled) await refreshBtn.click();
+    if (refreshBtn && refreshBtnEnabled) {
+      await Promise.all([
+        refreshBtn.click(),
+        page.waitForNavigation(NAVIGATION_WAIT),
+      ]);
 
-    // Sleep 10 ms
-    await sleep(10);
+      console.log("Clicked refresh");
+    }
+
+    // Wait for navigation
+    await page.waitForNavigation(NAVIGATION_WAIT);
   }
 
+  console.log(`Registration started at ${new Date()}`);
+  
   // Choosing lectures
   let lec;
   for (let i = 0; i < lectures.length; i++) {
@@ -111,6 +120,8 @@ async function registerMe() {
     `[name="${CAPTCHA_INPUT_NAME}"]`
   );
   await captchaInput.click();
+
+  console.log(`Program finished at ${new Date()}. Please enter the captcha and finish your registration`)
 }
 
 process.on("unhandledRejection", (...args) => {
