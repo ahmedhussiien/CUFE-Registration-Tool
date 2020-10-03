@@ -1,6 +1,9 @@
 // ---- LIBs
 const puppeteer = require("puppeteer");
 const dotenv = require("dotenv");
+const path = require("path");
+var fs = require("fs");
+const ocrad = require("async-ocrad");
 dotenv.config();
 
 // ---- USER CONSTANTS
@@ -100,7 +103,7 @@ async function registerMe() {
   }
 
   console.log(`Registration started at ${new Date()}`);
-  
+
   // Choosing lectures
   let lec;
   for (let i = 0; i < lectures.length; i++) {
@@ -109,7 +112,7 @@ async function registerMe() {
   }
 
   // Finalizing registration
-  let regNextBtn = await page.waitForSelector(`#${REG_SECOND_PAGE_BTN}`);
+  const regNextBtn = await page.waitForSelector(`#${REG_SECOND_PAGE_BTN}`);
   await regNextBtn.click();
 
   await fillInput(page, `#${EMAIL_INPUT}`, EMAIL);
@@ -121,8 +124,46 @@ async function registerMe() {
   );
   await captchaInput.click();
 
-  console.log(`Program finished at ${new Date()}. Please enter the captcha and finish your registration`)
+  // Solving Captcha code
+  const captchaCode = await solveCaptchaCode(page);
+  console.log("Captcha code:", captchaCode);
+  //await fillInput(page, `[name="${CAPTCHA_INPUT_NAME}"]`, captchaCode);
+
+  console.log(
+    `Program finished at ${new Date()}. Please double-check on the captcha code and finish your registration`
+  );
 }
+
+solveCaptchaCode = async (page) => {
+  // Get captcha code image
+  const captchaImage = await page.$("img");
+
+  if (!captchaImage) {
+    return "";
+  }
+
+  // Create /imgs directory
+  const dir = "./imgs";
+
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
+
+  // Take screenshot of the code
+  const captchaImagePath = path.join(
+    __dirname,
+    `/imgs/${new Date().getTime()}.png`
+  );
+
+  await captchaImage.screenshot({
+    path: captchaImagePath,
+    omitBackground: true,
+  });
+
+  // Solve the captcha
+  const solvedCaptcha = await ocrad(captchaImagePath);
+  return solvedCaptcha.replace(/[\n\r]/g, "").toUpperCase();
+};
 
 process.on("unhandledRejection", (...args) => {
   console.error(...args);

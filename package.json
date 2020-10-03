@@ -9,6 +9,7 @@
   "author": "Ahmed Hussein",
   "license": "ISC",
   "dependencies": {
+    "async-ocrad": "0.0.2",
     "dotenv": "^8.2.0",
     "puppeteer": "^5.3.1"
   }
