@@ -18,6 +18,7 @@ const lectures = require("./lectures.json").lectures;
 const USERNAME_INPUT = "txtUsername";
 const PASSSWORD_INPUT = "txtPassword";
 const LOGIN_BTN = "ext-gen24";
+const CHECKBOX = "ChkAccept";
 const REG_START_BTN = "ctl07_ButMessageShown";
 const REG_SECOND_PAGE_BTN = "ctl07_nextPage";
 const REFRESH_BTN = "ctl07_ButCheckOpen";
@@ -71,13 +72,17 @@ async function registerMe() {
 
   // Check if the registration is open
   let nextBtn = null;
+  let checkbox = null;
   let refreshBtn = null;
   let refreshBtnEnabled = true;
 
   while (!nextBtn) {
     // Check for the next button
     nextBtn = await page.$(`#${REG_START_BTN}`);
+    checkbox = await page.$(`#${CHECKBOX}`);
+
     if (nextBtn) {
+      if (checkbox) await checkbox.click();
       await nextBtn.click();
       break;
     }
